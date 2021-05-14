@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_utils.tasks import repeat_every
 
 import science
 import geojson
@@ -41,9 +42,18 @@ def casos_sonora():
     """
     return science.casos_sonora()
 
+
 @app.get('/mas_afectados/{afectados}')
 def mas_afectados(afectados):
     """
     Regresa los estados mas afectados
     """
     return science.mas_afectados(afectados)
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60)
+@app.get('/prueba')
+def test():
+    data = science.read_csv_from_url()
+    return data.to_json()

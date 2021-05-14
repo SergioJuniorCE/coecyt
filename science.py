@@ -4,6 +4,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 from datetime import datetime, timedelta, date
 
+
 from constantes import *
 
 
@@ -108,6 +109,7 @@ def filtrar_municipios():
     return sonora
 
 
+
 def descargar_datos():
     # Si ya existe
     if os.path.exists(f'downloads/{filename_mexico()}'):
@@ -128,3 +130,16 @@ def descargar_datos():
     # Si falla
     except Exception:
         return -1
+
+
+def read_csv_from_url(estado: int = 26):
+    sonora = {}
+    # URL del zip de los datos
+    url = 'http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
+    # Descarga los datos, los desconprime y los lee
+    data = pd.read_csv(url, compression='zip', header=0, sep=',', quotechar='"')
+    # Filtra los datos para sonora
+    data = data[data['ENTIDAD_RES'] == estado]
+    # javascript_sonora = data.to_json()
+    return data
+
